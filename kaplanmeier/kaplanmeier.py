@@ -118,7 +118,9 @@ def plot(out,
          title=None,
          full_ylim=False,
          y_percentage=False,
-         legend=1):
+         legend=1,
+         show_median=False,
+         xLabel=None):
     """Make plot.
 
     Parameters
@@ -233,12 +235,19 @@ def plot(out,
             idx=np.where(labx==out['uilabx'][i])[0]
             # Fit
             kmf.fit(out['time_event'][idx], event_observed=out['censoring'][idx], label=classlabel[i], ci_labels=None, alpha=(1 - cii_alpha))
+
+            # Plot median
+            ax.hlines(0.5, 0, kmf.median_survival_time_, color='black', linestyle='--')
+            ax.vlines(kmf.median_survival_time_, 0.05, 0.5, color='black', linestyle='--')
+            ax.text(kmf.median_survival_time_, 0, f'{int(kmf.median_survival_time_)}', horizontalalignment='center')
+
             # Plot
             kmf.plot(ax=ax, ci_force_lines=cii_lines, color=class_colors[i], show_censors=True, legend=0)
             # Store
             kmf_all.append(kmf.fit(out['time_event'][idx], event_observed=out['censoring'][idx], label=classlabel[i], ci_labels=None, alpha=(1 - cii_alpha)))
 
-        add_at_risk_counts(*kmf_all, ax=ax)
+
+        # add_at_risk_counts(*kmf_all, ax=ax)
 
         ax.tick_params(axis='x', length=15, width=1, direction='out', labelsize=Param['fontsize'])
         ax.tick_params(axis='y', length=15, width=1, direction='out', labelsize=Param['fontsize'])
@@ -246,6 +255,10 @@ def plot(out,
         ax.spines['left'].set_position(['outward', Param['fontsize']])
         #    ax.rc('font', size= Param['fontsize'])   # controls default text sizes
         #    ax.rc('axes',  labelsize = Param['fontsize'])  # fontsize of the x and y labels
+
+        if xLabel is not None:
+            ax.set_xlabel(xLabel)
+
         if legend>0: ax.legend(loc=legend, fontsize=10)
 
         if Param['savepath']!='':
@@ -266,7 +279,9 @@ def plot(out,
                 height=Param['height'],
                 fontsize=Param['fontsize'],
                 title=title,
-                legend=legend)
+                legend=legend,
+                show_median=show_median)
+
 
 
 # %% Compute coordinates (custom implementation)
