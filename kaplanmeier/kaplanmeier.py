@@ -239,7 +239,8 @@ def plot(out,
             # Plot median
             ax.hlines(0.5, 0, kmf.median_survival_time_, color='black', linestyle='--')
             ax.vlines(kmf.median_survival_time_, 0.05, 0.5, color='black', linestyle='--')
-            ax.text(kmf.median_survival_time_, 0, f'{int(kmf.median_survival_time_)}', horizontalalignment='center')
+            if 	np.isfinite(kmf.median_survival_time_) and show_median:
+            	ax.text(kmf.median_survival_time_, 0, f'{int(kmf.median_survival_time_)}', horizontalalignment='center')
 
             # Plot
             kmf.plot(ax=ax, ci_force_lines=cii_lines, color=class_colors[i], show_censors=True, legend=0)
